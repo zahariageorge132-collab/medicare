@@ -133,6 +133,19 @@ Per cambiare password: modifica il secret e rilancia l'azione «Pubblica sito».
 
 L'app sul tablet non ha login (comando `npm run build`, senza cifratura).
 
+## Scaricare l'APK già pronto (da GitHub, senza Android Studio)
+
+A ogni modifica, GitHub costruisce l'APK da solo. Per scaricarlo:
+
+1. Apri la scheda **Actions** del repository:
+   https://github.com/zahariageorge132-collab/medicare/actions
+2. Clicca sull'ultima esecuzione «Costruisci APK Android» (deve avere la spunta verde; se è in corso, aspetta ~3–5 min).
+3. In fondo alla pagina, sotto **Artifacts**, scarica **medicare-apk** (è uno .zip).
+4. Estrai lo .zip: dentro c'è `app-debug.apk`. Copialo sul tablet.
+5. Sul tablet apri il file: Android chiederà di consentire l'installazione da «origini sconosciute» → consenti → installa.
+
+> L'APK è «di debug», va benissimo per uso personale. Non passa dal Play Store, quindi lo installi a mano.
+
 ## Creare l'APK
 
 Requisiti: Node 20+, Android Studio (con JDK 21 incluso). Il tablet deve avere **Android 7.0 o superiore**.
