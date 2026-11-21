@@ -25,7 +25,7 @@ function loadScript(src: string, isReady: () => boolean): Promise<void> {
     s.src = src;
     s.async = true;
     s.onload = () => resolve();
-    s.onerror = () => reject(new Error('script'));
+    s.onerror = () => reject(new Error('Daily nu s-a încărcat (internet?)'));
     document.head.appendChild(s);
   });
 }
@@ -59,7 +59,16 @@ export async function startCall(roomUrl: string, h: VideoHandlers): Promise<void
       iframeStyle: { width: '320px', height: '240px', border: '0' },
     });
     daily.on('left-meeting', end);
-    daily.on('error', end);
+    daily.on('error', (ev: AnyObj) => {
+      const msg = ev?.errorMsg || ev?.error?.msg;
+      stopCall();
+      h.onEnd();
+      if (msg) console.warn('[daily]', msg);
+    });
+    // chiede subito i permessi di camera/microfono, così un rifiuto è chiaro
+    await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((st) => st.getTracks().forEach((t) => t.stop()))
+      .catch(() => { throw new Error('camera/microfon blocat'); });
     await daily.join({ url: roomUrl });
   } else {
     const iframe = document.createElement('iframe');

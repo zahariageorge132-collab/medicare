@@ -176,7 +176,9 @@ export const T = {
     videoLink: (url: string) =>
       'Deschideți acest link pe telefon pentru a vedea și a vorbi:\n' + url +
       '\n\nApăsați „Join / Intră". Veți vedea și auzi persoana; pe tabletă rămâne ceasul, iar persoana aude vocea dumneavoastră. Convorbirea se închide singură după câteva minute.',
-    videoError: 'Nu am putut porni videoconvorbirea. Verificați internetul (Wi-Fi) pe tabletă.',
+    videoError: (reason: string) =>
+      'Nu am putut porni videoconvorbirea.' + (reason ? ' (' + reason + ')' : '') +
+      '\nVerificați: internetul pe tabletă, că ați permis camera (încercați /foto) și că în Daily camera este „public" fără „prejoin".',
     videoNoRoom: 'Nu este setat niciun link pentru videoconvorbire. Adăugați-l în setările tabletei (Control de la distanță).',
     videoStopped: '📹 Videoconvorbirea s-a încheiat.',
     videoNone: 'Nicio videoconvorbire activă.',

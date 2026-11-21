@@ -66,8 +66,9 @@ export async function handleCommand(m: TgIncoming, ctx: BotContext) {
       try {
         const url = await ctx.startVideo();
         return ctx.reply(m.chatId, T.bot.videoLink(url));
-      } catch {
-        return ctx.reply(m.chatId, T.bot.videoError);
+      } catch (e) {
+        const reason = e instanceof Error ? e.message : String(e);
+        return ctx.reply(m.chatId, T.bot.videoError(reason));
       }
     case '/stopvideo':
       return ctx.reply(m.chatId, ctx.stopVideo() ? T.bot.videoStopped : T.bot.videoNone);
