@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#f3faf4" />
     <title>MEDICARE</title>
+    <script>
+      // Mostra sullo schermo eventuali errori di caricamento (utile su tablet vecchi),
+      // così al posto di una pagina bianca si vede il messaggio da inviare per l'assistenza.
+      (function () {
+        function show(msg) {
+          var d = document.getElementById('fatal-err') || document.createElement('div');
+          d.id = 'fatal-err';
+          d.style.cssText =
+            'position:fixed;inset:0;z-index:99999;background:#fff;color:#900;' +
+            'font:13px/1.4 monospace;padding:16px;white-space:pre-wrap;overflow:auto';
+          d.textContent = 'EROARE MEDICARE:\n\n' + msg;
+          (document.body || document.documentElement).appendChild(d);
+        }
+        window.addEventListener('error', function (e) {
+          show(
+            (e.message || e.type || 'error') +
+              '\n' + (e.filename || '') + ':' + (e.lineno || '') +
+              '\n' + ((e.error && e.error.stack) || ''),
+          );
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+          var r = e.reason || {};
+          show('Promise: ' + (r.stack || r.message || r));
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

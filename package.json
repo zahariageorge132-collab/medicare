@@ -23,9 +23,11 @@
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-legacy": "^8.2.4",
     "@vitejs/plugin-react": "^6.1.2",
     "oxlint": "^1.90.0",
     "staticrypt": "^3.5.4",
+    "terser": "^5.51.4",
     "typescript": "~7.0.2",
     "vite": "^8.3.6",
     "vite-plugin-singlefile": "^2.3.4"
