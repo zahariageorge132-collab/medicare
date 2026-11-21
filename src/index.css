@@ -177,3 +177,23 @@ html, body, #root {
 .history { width: 100%; border-collapse: collapse; }
 .history th, .history td { text-align: left; padding: 8px; border-bottom: 1px solid #e4e9e6; }
 .history tr.missed td { color: var(--danger); }
+
+/* ---------- Avviso fotocamera (sempre visibile durante lo scatto) ---------- */
+.camera-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #1b1f1c;
+  color: #fff;
+  text-align: center;
+  font-size: min(4.5vw, 5vh);
+  font-weight: 700;
+  padding: 2vh 3vw;
+}
+.admin h3 { font-size: 18px; margin: 16px 0 4px; }
+.col { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+.admin input.wide { width: 100%; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 2px solid #cfd8d2; }
+.admin select { font-size: 18px; padding: 8px 10px; border-radius: 10px; border: 2px solid #cfd8d2; }
+.hint { background: #eef6ff; border: 2px solid #9cc4ef; padding: 10px 14px; border-radius: 12px; }

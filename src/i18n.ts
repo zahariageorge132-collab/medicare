@@ -92,4 +92,79 @@ export const T = {
   kioskInfo:
     'Când ecranul este blocat, pacientul nu poate ieși din aplicație.',
   kioskWebOnly: 'Disponibil doar pe tabletă (aplicația Android).',
+  // Banner visibile sul tablet mentre la fotocamera è accesa
+  cameraBanner: '📷 Se face o fotografie pentru familie',
+
+  // Pannello: controllo da distanță
+  secRemote: 'Control de la distanță (Telegram)',
+  tgToken: 'Token-ul botului (de la @BotFather)',
+  tgSave: 'Conectează',
+  tgDisconnect: 'Deconectează',
+  tgStateOff: 'Neconectat',
+  tgStateConnecting: 'Se conectează…',
+  tgStateOk: (u: string) => `Conectat ✓  @${u}`,
+  tgStateError: (m: string) => `Eroare: ${m}`,
+  tgPairHelp: (pin: string) =>
+    `Pentru a primi mesaje, deschideți botul în Telegram și trimiteți: /start ${pin}`,
+  tgChats: 'Persoane conectate',
+  tgNoChats: 'Nicio persoană conectată încă.',
+  tgAlertAfter: 'Trimite avertizare dacă alarma sună de (minute, 0 = niciodată)',
+  tgNotifyConfirm: 'Trimite mesaj la fiecare confirmare',
+  tgCamera: 'Camera pentru fotografii',
+  tgCameraFront: 'Frontală (spre pacient)',
+  tgCameraBack: 'Din spate',
+  tgTestMsg: 'Trimite mesaj de test',
+  tgTestPhoto: 'Fă o fotografie de test',
+  tgSent: 'Trimis ✓',
+  tgFailed: 'Nu s-a putut trimite',
+
+  // Messaggi del bot (Telegram)
+  bot: {
+    commands: [
+      { command: 'stare', description: 'Starea de acum' },
+      { command: 'istoric', description: 'Istoricul ultimelor 7 zile' },
+      { command: 'ore', description: 'Orele medicamentelor (și modificare)' },
+      { command: 'foto', description: 'O fotografie de pe tabletă' },
+      { command: 'test', description: 'Pornește o alarmă de test' },
+      { command: 'ajutor', description: 'Lista comenzilor' },
+    ],
+    help:
+      'MEDICARE — comenzi:\n' +
+      '/stare — starea de acum\n' +
+      '/istoric — ultimele 7 zile\n' +
+      '/ore — orele medicamentelor\n' +
+      '/ore 08:00 11:00 14:00 17:00 — schimbă orele\n' +
+      '/foto — fă o fotografie\n' +
+      '/test — alarmă de test pe tabletă\n\n' +
+      'Primiți automat un mesaj dacă o doză nu este confirmată.',
+    unauthorized: 'Nu sunteți autorizat. Trimiteți: /start PIN (PIN-ul din setările tabletei).',
+    wrongPin: 'Cod PIN greșit.',
+    paired: (name: string) => `Bun venit, ${name}! Acum veți primi mesajele MEDICARE.`,
+    started: 'ℹ️ MEDICARE a pornit pe tabletă.',
+    test: 'Mesaj de test de la MEDICARE ✓',
+    confirmed: (label: string, time: string, at: string, delay: number) =>
+      `✅ ${label} (${time}) — confirmată la ${at}` + (delay > 0 ? ` (după ${delay} min)` : ''),
+    ringing: (label: string, time: string, min: number) =>
+      `⏰ Alarma pentru ${label} (${time}) sună de ${min} minute și nu a fost încă confirmată.`,
+    missed: (label: string, time: string) => `❌ ${label} (${time}) NU a fost confirmată.`,
+    statusHeader: (date: string, time: string) => `📋 Stare — ${date}, ora ${time}`,
+    statusRinging: (label: string, time: string, min: number) =>
+      `🔔 Alarma sună acum: ${label} (${time}), de ${min} min`,
+    statusOk: '✅ Nicio alarmă activă',
+    statusNext: (t: string, tomorrow: boolean) => `Următoarea doză: ${tomorrow ? 'mâine ' : ''}la ${t}`,
+    statusToday: 'Azi:',
+    doseTaken: (at: string) => `✓ luată la ${at}`,
+    doseMissed: '✗ neconfirmată',
+    dosePending: '… urmează',
+    doseRinging: '🔔 sună acum',
+    historyHeader: '🗓 Istoric — ultimele 7 zile',
+    historyEmpty: 'Nu există încă înregistrări.',
+    hoursList: (list: string) => `🕗 Orele medicamentelor: ${list}\nPentru a le schimba: /ore 08:00 11:00 14:00 17:00`,
+    hoursSaved: (list: string) => `✅ Orele noi: ${list}`,
+    hoursInvalid: 'Format greșit. Exemplu: /ore 08:00 11:00 14:00 17:00 (între 1 și 8 ore diferite).',
+    testStarted: '🔔 Alarma de test a pornit pe tabletă.',
+    photoTaking: '📷 Fac fotografia…',
+    photoCaption: (date: string, time: string) => `📷 ${date}, ora ${time}`,
+    photoError: 'Nu am putut face fotografia (camera nu este disponibilă sau permisiunea lipsește).',
+  },
 } as const;

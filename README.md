@@ -26,6 +26,43 @@ riproduce in ciclo il messaggio vocale di un familiare e mostra un enorme pulsan
   come «Home» (si apre da sola all'accensione), kiosk con `startLockTask`, notifiche
   giornaliere di riserva se l'app venisse chiusa.
 
+## Controllo a distanza (bot Telegram) e foto
+
+Dal telefono, in Telegram, puoi:
+
+| Comando | Cosa fa |
+|---|---|
+| `/stare` | stato di adesso: allarme attivo, dosi di oggi, prossima dose |
+| `/istoric` | ultimi 7 giorni |
+| `/ore` | mostra gli orari |
+| `/ore 08:00 11:00 14:00 17:00` | cambia gli orari (accetta anche `8`, `12.30`, `1800`) |
+| `/foto` | scatta una foto con la fotocamera del tablet e te la manda |
+| `/test` | fa partire un allarme di prova sul tablet |
+
+Avvisi automatici:
+- ✅ dose confermata (disattivabile)
+- ⏰ l'allarme suona da X minuti senza conferma (predefinito 15, 0 = mai)
+- ❌ dose non confermata
+- ℹ️ MEDICARE riavviata (es. dopo un riavvio del tablet)
+
+I messaggi non inviati per mancanza di rete vengono rimandati quando torna la connessione.
+
+**Privacy:** la fotocamera si accende solo per lo scatto (circa 2 secondi) e per tutto quel tempo
+in alto sullo schermo compare «📷 Se face o fotografie pentru familie». Le foto non vengono salvate
+sul tablet: vanno solo nella chat Telegram di chi è abbinato.
+
+### Configurazione
+
+1. In Telegram apri **@BotFather** → `/newbot` → scegli nome e username → copia il **token**.
+2. Sul tablet: pannello (5 tocchi sull'orologio + PIN) → «Control de la distanță» → incolla il token → «Conectează».
+   Deve comparire «Conectat ✓ @nomebot».
+3. Dal tuo telefono apri il bot e scrivi `/start PIN` (il PIN del pannello). Ogni familiare fa lo stesso.
+   Le persone abbinate compaiono nel pannello e si possono rimuovere.
+4. Premi «Fă o fotografie de test»: la prima volta Android chiede il permesso per la fotocamera → **Consenti**.
+
+Chi non si è abbinato con il PIN riceve solo «Nu sunteți autorizat». Il tablet ha bisogno di internet (Wi-Fi).
+I testi del bot sono in rumeno come il resto dell'app: si cambiano in `src/i18n.ts` (sezione `bot`).
+
 ## Struttura
 
 ```
@@ -36,6 +73,9 @@ src/
   storage.ts       impostazioni/storico (localStorage), voce (IndexedDB)
   audio.ts         ciclo audio dell'allarme
   native.ts        ponte verso Android + notifiche di riserva
+  telegram.ts      client Bot API (long polling, invio, coda offline)
+  botCommands.ts   comandi /stare /istoric /ore /foto /test e abbinamento /start PIN
+  camera.ts        scatto di una singola foto
   App.tsx          macchina a stati delle schermate
   components/      Home, AlarmScreen, Confirmed, PinPad, Admin
 public/alarm.wav   suono di avviso (copiato anche in android/.../res/raw)
@@ -102,6 +142,8 @@ Impostazioni → Sicurezza → App di amministrazione dispositivo, oppure un res
 - L'allarme completo (voce in ciclo + schermata) funziona quando MEDICARE è in primo piano,
   che è proprio lo scopo del kiosk. Se l'app venisse chiusa, suona solo la notifica di riserva;
   toccandola si apre l'app che mostra subito l'allarme.
+- Il bot funziona quando MEDICARE è aperta (cioè sempre, con il kiosk) e il tablet ha internet.
+- Nella versione web (sito di prova) il bot e la fotocamera non funzionano: servono l'app Android.
 - Non ho potuto compilare l'APK nel mio ambiente (manca l'SDK Android): la parte web
   è compilata e testata, la parte Java va verificata alla prima build in Android Studio.
 - I dati restano solo sul tablet: nessun server, nessun account.

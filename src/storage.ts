@@ -6,12 +6,26 @@ export interface Dose {
   time: string; // "HH:MM"
 }
 
+export interface PairedChat {
+  id: number;
+  name: string;
+}
+
+export interface TelegramSettings {
+  token: string;
+  chats: PairedChat[];
+  alertAfterMin: number; // avviso se l'allarme suona da X minuti (0 = mai)
+  notifyConfirm: boolean; // avviso a ogni conferma
+}
+
 export interface Settings {
   doses: Dose[];
   pin: string;
   maxVolume: boolean;
   maxDurationMin: number; // 0 = l'allarme suona finché non si preme il pulsante
   kiosk: boolean;
+  telegram: TelegramSettings;
+  camera: 'user' | 'environment';
   /** Le dosi programmate prima di questo momento (data+minuti) vengono ignorate. */
   activeSince: { date: string; minutes: number };
 }
@@ -41,6 +55,8 @@ export function defaultSettings(activeSince: Settings['activeSince']): Settings 
     maxVolume: true,
     maxDurationMin: 120,
     kiosk: false,
+    telegram: { token: '', chats: [], alertAfterMin: 15, notifyConfirm: true },
+    camera: 'user',
     activeSince,
   };
 }
@@ -48,7 +64,11 @@ export function defaultSettings(activeSince: Settings['activeSince']): Settings 
 export function loadSettings(activeSince: Settings['activeSince']): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    if (raw) return { ...defaultSettings(activeSince), ...JSON.parse(raw) };
+    if (raw) {
+      const d = defaultSettings(activeSince);
+      const saved = JSON.parse(raw);
+      return { ...d, ...saved, telegram: { ...d.telegram, ...(saved.telegram ?? {}) } };
+    }
   } catch { /* dati corrotti: si riparte dai predefiniti */ }
   const s = defaultSettings(activeSince);
   saveSettings(s);
@@ -111,4 +131,12 @@ export async function loadVoice(): Promise<Blob | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * Applica nuovi orari: valgono da adesso in poi, così un orario
+ * appena aggiunto ma già passato non fa suonare subito l'allarme.
+ */
+export function withDoses(s: Settings, doses: Dose[], now: { date: string; minutes: number }): Settings {
+  return { ...s, doses, activeSince: { date: now.date, minutes: now.minutes } };
 }

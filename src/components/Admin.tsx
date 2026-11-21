@@ -4,15 +4,23 @@ import { T } from '../i18n';
 import { isNative, kioskState, startKiosk, stopKiosk } from '../native';
 import { sortedDoses } from '../schedule';
 import {
-  DEFAULT_PIN, loadVoice, saveVoice,
+  DEFAULT_PIN, loadVoice, saveVoice, withDoses,
   type Dose, type HistoryEntry, type Settings,
 } from '../storage';
-import { addDays, formatShortDate } from '../time';
+import type { BotState } from '../telegram';
+import { addDays, formatShortDate, nowInZone } from '../time';
+
+export interface RemoteApi {
+  state: BotState;
+  testMessage(): Promise<boolean>;
+  testPhoto(): Promise<boolean>;
+}
 
 interface Props {
   settings: Settings;
   history: HistoryEntry[];
   today: string;
+  remote: RemoteApi;
   onChange: (s: Settings) => void;
   onTest: () => void;
   onClose: () => void;
@@ -20,7 +28,7 @@ interface Props {
 
 const IDLE_CLOSE_MS = 3 * 60 * 1000;
 
-export function Admin({ settings, history, today, onChange, onTest, onClose }: Props) {
+export function Admin({ settings, history, today, remote, onChange, onTest, onClose }: Props) {
   // Chiusura automatica dopo 3 minuti di inattività.
   useEffect(() => {
     let id = window.setTimeout(onClose, IDLE_CLOSE_MS);
@@ -50,6 +58,7 @@ export function Admin({ settings, history, today, onChange, onTest, onClose }: P
       <VoiceSection />
       <AlarmSection settings={settings} onChange={onChange} onTest={onTest} />
       <HistorySection history={history} today={today} />
+      <RemoteSection settings={settings} remote={remote} onChange={onChange} />
       <PinSection settings={settings} onChange={onChange} />
       <KioskSection settings={settings} onChange={onChange} />
     </main>
@@ -69,7 +78,7 @@ function DosesSection({ settings, onChange }: { settings: Settings; onChange: (s
     }
     const sorted = sortedDoses(doses.map((d) => ({ id: d.time, time: d.time })));
     setDoses(sorted);
-    onChange({ ...settings, doses: sorted });
+    onChange(withDoses(settings, sorted, nowInZone()));
     setMsg(T.saved);
   };
 
@@ -325,6 +334,105 @@ function KioskSection({ settings, onChange }: { settings: Settings; onChange: (s
           <span className="msg">{owner ? 'Device Owner ✓' : ''}</span>
         </div>
       )}
+    </section>
+  );
+}
+
+// ---------------- Controllo a distanza (Telegram) ----------------
+function RemoteSection({ settings, remote, onChange }: {
+  settings: Settings; remote: RemoteApi; onChange: (s: Settings) => void;
+}) {
+  const tg = settings.telegram;
+  const [token, setToken] = useState(tg.token);
+  const [msg, setMsg] = useState('');
+  const [busy, setBusy] = useState(false);
+  const setTg = (patch: Partial<Settings['telegram']>) => onChange({ ...settings, telegram: { ...tg, ...patch } });
+
+  const st = remote.state;
+  const stateText =
+    st.kind === 'ok' ? T.tgStateOk(st.username)
+    : st.kind === 'connecting' ? T.tgStateConnecting
+    : st.kind === 'error' ? T.tgStateError(st.message)
+    : T.tgStateOff;
+
+  const run = async (fn: () => Promise<boolean>) => {
+    setBusy(true);
+    setMsg('');
+    const ok = await fn();
+    setBusy(false);
+    setMsg(ok ? T.tgSent : T.tgFailed);
+  };
+
+  return (
+    <section className="card">
+      <h2>{T.secRemote}</h2>
+      <label className="col">
+        <span>{T.tgToken}</span>
+        <input
+          type="password"
+          className="wide"
+          autoComplete="off"
+          value={token}
+          placeholder="123456789:AAH…"
+          onChange={(e) => setToken(e.target.value.trim())}
+        />
+      </label>
+      <div className="row wrap">
+        <button type="button" className="btn primary" onClick={() => setTg({ token })}>{T.tgSave}</button>
+        {tg.token && (
+          <button type="button" className="btn" onClick={() => { setToken(''); setTg({ token: '' }); }}>
+            {T.tgDisconnect}
+          </button>
+        )}
+        <span className={st.kind === 'error' ? 'error' : 'msg'}>{stateText}</span>
+      </div>
+
+      {st.kind === 'ok' && <p className="hint">{T.tgPairHelp(settings.pin)}</p>}
+
+      <h3>{T.tgChats}</h3>
+      {tg.chats.length === 0 ? (
+        <p>{T.tgNoChats}</p>
+      ) : (
+        tg.chats.map((c) => (
+          <div className="row" key={c.id}>
+            <span className="row-label">{c.name}</span>
+            <button type="button" className="btn" onClick={() => setTg({ chats: tg.chats.filter((x) => x.id !== c.id) })}>
+              {T.doseRemove}
+            </button>
+          </div>
+        ))
+      )}
+
+      <label className="row">
+        <span>{T.tgAlertAfter}</span>
+        <input
+          type="number"
+          min={0}
+          max={600}
+          value={tg.alertAfterMin}
+          onChange={(e) => setTg({ alertAfterMin: Math.max(0, Math.min(600, Number(e.target.value) || 0)) })}
+        />
+      </label>
+      <label className="row">
+        <input type="checkbox" checked={tg.notifyConfirm} onChange={(e) => setTg({ notifyConfirm: e.target.checked })} />
+        <span>{T.tgNotifyConfirm}</span>
+      </label>
+      <label className="row">
+        <span>{T.tgCamera}</span>
+        <select
+          value={settings.camera}
+          onChange={(e) => onChange({ ...settings, camera: e.target.value as Settings['camera'] })}
+        >
+          <option value="user">{T.tgCameraFront}</option>
+          <option value="environment">{T.tgCameraBack}</option>
+        </select>
+      </label>
+
+      <div className="row wrap">
+        <button type="button" className="btn" disabled={busy} onClick={() => run(remote.testMessage)}>{T.tgTestMsg}</button>
+        <button type="button" className="btn" disabled={busy} onClick={() => run(remote.testPhoto)}>{T.tgTestPhoto}</button>
+        <span className="msg">{msg}</span>
+      </div>
     </section>
   );
 }
