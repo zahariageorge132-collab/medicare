@@ -10,6 +10,8 @@ on:
 jobs:
   apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -49,3 +51,15 @@ jobs:
           name: medicare-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      # Pubblica l'APK come Release, con link fisso scaricabile dal tablet:
+      # https://github.com/zahariageorge132-collab/medicare/releases/latest/download/MEDICARE.apk
+      - name: Prepara file APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk MEDICARE.apk
+      - name: Pubblica come Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk
+          name: MEDICARE — ultima versione
+          body: "APK di MEDICARE, aggiornato automaticamente a ogni modifica. Scarica MEDICARE.apk e installalo sul tablet."
+          files: MEDICARE.apk
