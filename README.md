@@ -37,6 +37,8 @@ Dal telefono, in Telegram, puoi:
 | `/ore` | mostra gli orari |
 | `/ore 08:00 11:00 14:00 17:00` | cambia gli orari (accetta anche `8`, `12.30`, `1800`) |
 | `/foto` | scatta una foto con la fotocamera del tablet e te la manda |
+| `/video` | il tablet entra in una videochiamata; ti arriva il link, lo apri e vi vedete/sentite |
+| `/stopvideo` | chiude la videochiamata |
 | `/test` | fa partire un allarme di prova sul tablet |
 
 Avvisi automatici:
@@ -46,6 +48,12 @@ Avvisi automatici:
 - ℹ️ MEDICARE riavviata (es. dopo un riavvio del tablet)
 
 I messaggi non inviati per mancanza di rete vengono rimandati quando torna la connessione.
+
+**Videochiamata:** con `/video` il tablet entra da solo in una stanza di Jitsi Meet (gratuito, nessun
+server) e ti manda il link; tu lo apri sul telefono e vedi/senti la persona. Sul tablet NON compare
+l'interfaccia della chiamata: resta l'orologio, con in alto l'avviso «📹 Videoconvorbire cu familia»
+per tutta la durata, e la persona sente la tua voce dall'altoparlante. La chiamata si chiude da sola
+dopo 15 minuti, con `/stopvideo`, o quando chiudi tu dal telefono.
 
 **Privacy:** la fotocamera si accende solo per lo scatto (circa 2 secondi) e per tutto quel tempo
 in alto sullo schermo compare «📷 Se face o fotografie pentru familie». Le foto non vengono salvate
@@ -76,6 +84,7 @@ src/
   telegram.ts      client Bot API (long polling, invio, coda offline)
   botCommands.ts   comandi /stare /istoric /ore /foto /test e abbinamento /start PIN
   camera.ts        scatto di una singola foto
+  videocall.ts     videochiamata Jitsi (il tablet entra da solo, schermo resta sull'orologio)
   App.tsx          macchina a stati delle schermate
   components/      Home, AlarmScreen, Confirmed, PinPad, Admin
 public/alarm.wav   suono di avviso (copiato anche in android/.../res/raw)
@@ -158,7 +167,8 @@ Impostazioni → Sicurezza → App di amministrazione dispositivo, oppure un res
   che è proprio lo scopo del kiosk. Se l'app venisse chiusa, suona solo la notifica di riserva;
   toccandola si apre l'app che mostra subito l'allarme.
 - Il bot funziona quando MEDICARE è aperta (cioè sempre, con il kiosk) e il tablet ha internet.
-- Nella versione web (sito di prova) il bot e la fotocamera non funzionano: servono l'app Android.
+- Nella versione web (sito di prova) il bot, la fotocamera e la videochiamata non funzionano: serve l'app Android.
+  (Nell'anteprima su claude.ai la videochiamata è bloccata; sul sito GitHub Pages e sull'app Android funziona.)
 - Non ho potuto compilare l'APK nel mio ambiente (manca l'SDK Android): la parte web
   è compilata e testata, la parte Java va verificata alla prima build in Android Studio.
 - I dati restano solo sul tablet: nessun server, nessun account.

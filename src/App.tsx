@@ -18,6 +18,7 @@ import {
   type HistoryEntry, type Settings,
 } from './storage';
 import { TelegramBot, type BotState } from './telegram';
+import { newRoom, roomUrl, startCall, stopCall } from './videocall';
 import { formatShortDate, hhmmToMinutes, nowInZone, type ZonedNow } from './time';
 
 type Overlay = 'none' | 'pin' | 'admin' | 'confirmed';
@@ -35,6 +36,7 @@ export default function App() {
   const [testAlarm, setTestAlarm] = useState<ActiveAlarm | null>(null);
   const [botState, setBotState] = useState<BotState>({ kind: 'off' });
   const [cameraOn, setCameraOn] = useState(false);
+  const [videoOn, setVideoOn] = useState(false);
 
   const player = useRef(new AlarmPlayer());
   const ringingKey = useRef<string | null>(null);
@@ -74,6 +76,8 @@ export default function App() {
 
   // ---------------- Telegram ----------------
   const botRef = useRef<TelegramBot | null>(null);
+  const videoOnRef = useRef(false);
+  videoOnRef.current = videoOn;
 
   const broadcast = useCallback((text: string) => {
     const bot = botRef.current;
@@ -119,6 +123,23 @@ export default function App() {
         botRef.current?.send(chatId, text);
       },
       sendPhoto: sendPhotoTo,
+      startVideo: async () => {
+        const room = newRoom();
+        await startCall(room, {
+          onStart: () => setVideoOn(true),
+          onEnd: () => {
+            setVideoOn(false);
+            broadcast(T.bot.videoStopped);
+          },
+        });
+        return roomUrl(room);
+      },
+      stopVideo: () => {
+        const was = videoOnRef.current;
+        stopCall();
+        setVideoOn(false);
+        return was;
+      },
     };
     const bot = new TelegramBot((m) => handleCommand(m, ctx), setBotState);
     botRef.current = bot;
@@ -180,6 +201,7 @@ export default function App() {
     () => () => {
       player.current.stop();
       ringingKey.current = null;
+      stopCall();
     },
     [],
   );
@@ -272,6 +294,7 @@ export default function App() {
     <>
       {screen}
       {cameraOn && <div className="camera-banner" role="status">{T.cameraBanner}</div>}
+      {videoOn && <div className="camera-banner video-banner" role="status">{T.videoBanner}</div>}
     </>
   );
 }

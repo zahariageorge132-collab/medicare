@@ -197,3 +197,17 @@ html, body, #root {
 .admin input.wide { width: 100%; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 2px solid #cfd8d2; }
 .admin select { font-size: 18px; padding: 8px 10px; border-radius: 10px; border: 2px solid #cfd8d2; }
 .hint { background: #eef6ff; border: 2px solid #9cc4ef; padding: 10px 14px; border-radius: 12px; }
+.camera-banner.video-banner { background: #0d6b29; }
+/* Iframe della videochiamata: presente ma non visibile (resta l'orologio). */
+.video-hidden {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.video-hidden iframe { width: 320px; height: 240px; border: 0; }

@@ -94,6 +94,7 @@ export const T = {
   kioskWebOnly: 'Disponibil doar pe tabletă (aplicația Android).',
   // Banner visibile sul tablet mentre la fotocamera è accesa
   cameraBanner: '📷 Se face o fotografie pentru familie',
+  videoBanner: '📹 Videoconvorbire cu familia',
 
   // Pannello: controllo da distanță
   secRemote: 'Control de la distanță (Telegram)',
@@ -125,6 +126,7 @@ export const T = {
       { command: 'istoric', description: 'Istoricul ultimelor 7 zile' },
       { command: 'ore', description: 'Orele medicamentelor (și modificare)' },
       { command: 'foto', description: 'O fotografie de pe tabletă' },
+      { command: 'video', description: 'Pornește o videoconvorbire' },
       { command: 'test', description: 'Pornește o alarmă de test' },
       { command: 'ajutor', description: 'Lista comenzilor' },
     ],
@@ -135,6 +137,8 @@ export const T = {
       '/ore — orele medicamentelor\n' +
       '/ore 08:00 11:00 14:00 17:00 — schimbă orele\n' +
       '/foto — fă o fotografie\n' +
+      '/video — pornește o videoconvorbire\n' +
+      '/stopvideo — oprește videoconvorbirea\n' +
       '/test — alarmă de test pe tabletă\n\n' +
       'Primiți automat un mesaj dacă o doză nu este confirmată.',
     unauthorized: 'Nu sunteți autorizat. Trimiteți: /start PIN (PIN-ul din setările tabletei).',
@@ -166,5 +170,12 @@ export const T = {
     photoTaking: '📷 Fac fotografia…',
     photoCaption: (date: string, time: string) => `📷 ${date}, ora ${time}`,
     photoError: 'Nu am putut face fotografia (camera nu este disponibilă sau permisiunea lipsește).',
+    videoStarting: '📹 Pornesc videoconvorbirea pe tabletă…',
+    videoLink: (url: string) =>
+      'Deschideți acest link pe telefon pentru a vedea și a vorbi:\n' + url +
+      '\n\nApăsați „Join / Intră". Veți vedea și auzi persoana; pe tabletă rămâne ceasul, iar persoana aude vocea dumneavoastră. Convorbirea se închide singură după câteva minute.',
+    videoError: 'Nu am putut porni videoconvorbirea. Verificați internetul (Wi-Fi) pe tabletă.',
+    videoStopped: '📹 Videoconvorbirea s-a încheiat.',
+    videoNone: 'Nicio videoconvorbire activă.',
   },
 } as const;

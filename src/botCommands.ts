@@ -14,6 +14,8 @@ export interface BotContext {
   triggerTest(): void;
   reply(chatId: number, text: string): void;
   sendPhoto(chatId: number): Promise<void>;
+  startVideo(): Promise<string>;
+  stopVideo(): boolean;
 }
 
 export async function handleCommand(m: TgIncoming, ctx: BotContext) {
@@ -57,6 +59,16 @@ export async function handleCommand(m: TgIncoming, ctx: BotContext) {
         ctx.reply(m.chatId, T.bot.photoError);
       }
       return;
+    case '/video':
+      ctx.reply(m.chatId, T.bot.videoStarting);
+      try {
+        const url = await ctx.startVideo();
+        return ctx.reply(m.chatId, T.bot.videoLink(url));
+      } catch {
+        return ctx.reply(m.chatId, T.bot.videoError);
+      }
+    case '/stopvideo':
+      return ctx.reply(m.chatId, ctx.stopVideo() ? T.bot.videoStopped : T.bot.videoNone);
     default:
       return ctx.reply(m.chatId, T.bot.help);
   }
