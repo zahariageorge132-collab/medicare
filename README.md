@@ -94,6 +94,12 @@ npm run dev
 Per provare l'allarme: pannello (5 tocchi sull'orologio, PIN 1234) → «Testează alarma acum».
 Nel browser, la prima riproduzione audio può richiedere un tocco sulla pagina: sul tablet no.
 
+## Sito (GitHub Pages)
+
+A ogni push su `main` la versione web viene pubblicata da sola su
+https://zahariageorge132-collab.github.io/medicare/
+(serve una volta: Settings → Pages → Source: **GitHub Actions**).
+
 ## Creare l'APK
 
 Requisiti: Node 20+, Android Studio (con JDK 21 incluso). Il tablet deve avere **Android 7.0 o superiore**.
