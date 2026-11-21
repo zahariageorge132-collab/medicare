@@ -1,0 +1,11 @@
+{
+  "appId": "ro.medicare.app",
+  "appName": "MEDICARE",
+  "webDir": "dist",
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#138A36",
+      "sound": "alarm.wav"
+    }
+  }
+}

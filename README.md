@@ -148,7 +148,7 @@ A ogni modifica, GitHub costruisce l'APK da solo. Per scaricarlo:
 
 ## Creare l'APK
 
-Requisiti: Node 20+, Android Studio (con JDK 21 incluso). Il tablet deve avere **Android 7.0 o superiore**.
+Requisiti: Node 20+, Android Studio (con JDK 21 incluso). Il tablet deve avere **Android 6.0 o superiore**.
 
 ```bash
 npm install
@@ -163,6 +163,7 @@ Ogni volta che modifichi il codice in `src/`: `npm run build && npx cap sync and
 
 ## Configurazione del tablet (una volta sola)
 
+0. Il tablet deve avere **Android 6.0 o superiore**.
 1. **Fuso orario**: Impostazioni → Data e ora → Europe/Rome (l'app usa comunque Roma,
    ma le notifiche di riserva usano l'ora del tablet).
 2. **Sempre in carica**: lo schermo resta acceso tutto il giorno.
