@@ -100,6 +100,15 @@ A ogni push su `main` la versione web viene pubblicata da sola su
 https://zahariageorge132-collab.github.io/medicare/
 (serve una volta: Settings → Pages → Source: **GitHub Actions**).
 
+Il sito è **protetto da password**: la pagina viene cifrata (AES, con
+[StatiCrypt](https://github.com/robinmoisson/staticrypt)) e senza password non si vede niente.
+La password non è nel codice: è il secret **`SITE_PASSWORD`** del repository
+(Settings → Secrets and variables → Actions → New repository secret, almeno 8 caratteri).
+Se il secret manca, la pubblicazione si ferma invece di mettere online un sito aperto.
+Per cambiare password: modifica il secret e rilancia l'azione «Pubblica sito».
+
+L'app sul tablet non ha login (comando `npm run build`, senza cifratura).
+
 ## Creare l'APK
 
 Requisiti: Node 20+, Android Studio (con JDK 21 incluso). Il tablet deve avere **Android 7.0 o superiore**.
