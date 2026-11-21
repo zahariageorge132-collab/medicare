@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MEDICARE</string>
+    <string name="title_activity_main">MEDICARE</string>
+    <string name="package_name">ro.medicare.app</string>
+    <string name="custom_url_scheme">ro.medicare.app</string>
+</resources>
