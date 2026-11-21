@@ -23,7 +23,14 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - uses: android-actions/setup-android@v3
+      # Usa l'SDK Android già installato sui runner di GitHub: accetta le licenze
+      # e assicura la piattaforma necessaria. Gradle scarica da solo il resto.
+      - name: Prepara Android SDK
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          SM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SM" --licenses >/dev/null 2>&1 || true
+          "$SM" "platform-tools" "platforms;android-36" >/dev/null 2>&1 || true
 
       # Versione web + copia dentro il progetto Android
       - run: npm ci
