@@ -1,40 +1,31 @@
-// Videochiamata con la famiglia tramite Jitsi Meet (gratuito, nessun server).
-// Il tablet entra da solo nella stanza. La famiglia apre lo stesso link e vede/sente.
-// Sul tablet il video della chiamata NON occupa lo schermo (resta l'orologio),
-// ma per tutta la durata resta un avviso ben visibile che la videochiamata è attiva,
-// e la voce della famiglia si sente dall'altoparlante del tablet.
+// Videochiamata su una "stanza fissa" configurata dal familiare (es. Daily.co, gratuito).
+// Il tablet entra da solo nella stanza; la famiglia apre lo stesso link dal telefono.
+// Sul tablet la chiamata NON occupa lo schermo (resta l'orologio), con un avviso sempre
+// visibile, e la voce della famiglia si sente dall'altoparlante.
+//
+// - se il link è di Daily.co: uso il loro SDK, che entra subito senza schermata intermedia
+// - altrimenti: carico la stanza in un iframe nascosto (funziona con i servizi che
+//   entrano automaticamente dal solo link)
 
-const JITSI_DOMAIN = 'meet.jit.si';
-const SCRIPT_URL = `https://${JITSI_DOMAIN}/external_api.js`;
 const MAX_MINUTES = 15; // la chiamata si chiude da sola dopo questo tempo
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type JitsiApi = any;
+type AnyObj = any;
 
-let api: JitsiApi = null;
+let daily: AnyObj = null;
 let container: HTMLDivElement | null = null;
 let endTimer: number | null = null;
 
-export function newRoom(): string {
-  const rnd = () => Math.random().toString(36).slice(2);
-  return `medicare-${rnd()}${rnd()}`;
-}
+export const callActive = () => !!container;
 
-export function roomUrl(room: string): string {
-  return `https://${JITSI_DOMAIN}/${room}`;
-}
-
-export const callActive = () => !!api;
-
-function loadScript(): Promise<void> {
+function loadScript(src: string, isReady: () => boolean): Promise<void> {
   return new Promise((resolve, reject) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((window as any).JitsiMeetExternalAPI) return resolve();
+    if (isReady()) return resolve();
     const s = document.createElement('script');
-    s.src = SCRIPT_URL;
+    s.src = src;
     s.async = true;
     s.onload = () => resolve();
-    s.onerror = () => reject(new Error('Nu s-a putut încărca videoconvorbirea'));
+    s.onerror = () => reject(new Error('script'));
     document.head.appendChild(s);
   });
 }
@@ -44,40 +35,40 @@ export interface VideoHandlers {
   onEnd(): void;
 }
 
-export async function startCall(room: string, h: VideoHandlers): Promise<void> {
+export async function startCall(roomUrl: string, h: VideoHandlers): Promise<void> {
   await stopCall();
-  await loadScript();
-
   container = document.createElement('div');
   container.className = 'video-hidden';
   document.body.appendChild(container);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Ext = (window as any).JitsiMeetExternalAPI;
-  api = new Ext(JITSI_DOMAIN, {
-    roomName: room,
-    parentNode: container,
-    width: 320,
-    height: 240,
-    configOverwrite: {
-      prejoinPageEnabled: false,
-      disableDeepLinking: true,
-      startWithAudioMuted: false,
-      startWithVideoMuted: false,
-      disableInviteFunctions: true,
-    },
-    interfaceConfigOverwrite: { MOBILE_APP_PROMO: false },
-    userInfo: { displayName: 'Tableta' },
-  });
 
   const end = () => {
     stopCall();
     h.onEnd();
   };
-  api.addEventListener('videoConferenceLeft', end);
-  api.addEventListener('readyToClose', end);
-  endTimer = window.setTimeout(end, MAX_MINUTES * 60000);
 
+  if (/\.daily\.co\//i.test(roomUrl)) {
+    await loadScript(
+      'https://unpkg.com/@daily-co/daily-js',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      () => !!(window as AnyObj).DailyIframe,
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const DailyIframe = (window as AnyObj).DailyIframe;
+    daily = DailyIframe.createFrame(container, {
+      showLeaveButton: false,
+      iframeStyle: { width: '320px', height: '240px', border: '0' },
+    });
+    daily.on('left-meeting', end);
+    daily.on('error', end);
+    await daily.join({ url: roomUrl });
+  } else {
+    const iframe = document.createElement('iframe');
+    iframe.allow = 'camera; microphone; autoplay; fullscreen; speaker';
+    iframe.src = roomUrl;
+    container.appendChild(iframe);
+  }
+
+  endTimer = window.setTimeout(end, MAX_MINUTES * 60000);
   h.onStart();
 }
 
@@ -87,11 +78,11 @@ export async function stopCall(): Promise<void> {
     endTimer = null;
   }
   try {
-    api?.dispose();
+    await daily?.destroy();
   } catch {
     /* già chiusa */
   }
-  api = null;
+  daily = null;
   if (container) {
     container.remove();
     container = null;

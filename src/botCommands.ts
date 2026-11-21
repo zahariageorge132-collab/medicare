@@ -14,6 +14,7 @@ export interface BotContext {
   triggerTest(): void;
   reply(chatId: number, text: string): void;
   sendPhoto(chatId: number): Promise<void>;
+  videoRoom(): string;
   startVideo(): Promise<string>;
   stopVideo(): boolean;
 }
@@ -60,6 +61,7 @@ export async function handleCommand(m: TgIncoming, ctx: BotContext) {
       }
       return;
     case '/video':
+      if (!ctx.videoRoom()) return ctx.reply(m.chatId, T.bot.videoNoRoom);
       ctx.reply(m.chatId, T.bot.videoStarting);
       try {
         const url = await ctx.startVideo();

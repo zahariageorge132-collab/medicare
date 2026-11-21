@@ -18,7 +18,7 @@ import {
   type HistoryEntry, type Settings,
 } from './storage';
 import { TelegramBot, type BotState } from './telegram';
-import { newRoom, roomUrl, startCall, stopCall } from './videocall';
+import { startCall, stopCall } from './videocall';
 import { formatShortDate, hhmmToMinutes, nowInZone, type ZonedNow } from './time';
 
 type Overlay = 'none' | 'pin' | 'admin' | 'confirmed';
@@ -123,16 +123,17 @@ export default function App() {
         botRef.current?.send(chatId, text);
       },
       sendPhoto: sendPhotoTo,
+      videoRoom: () => settingsRef.current.videoRoom,
       startVideo: async () => {
-        const room = newRoom();
-        await startCall(room, {
+        const url = settingsRef.current.videoRoom;
+        await startCall(url, {
           onStart: () => setVideoOn(true),
           onEnd: () => {
             setVideoOn(false);
             broadcast(T.bot.videoStopped);
           },
         });
-        return roomUrl(room);
+        return url;
       },
       stopVideo: () => {
         const was = videoOnRef.current;

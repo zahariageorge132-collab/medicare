@@ -49,11 +49,26 @@ Avvisi automatici:
 
 I messaggi non inviati per mancanza di rete vengono rimandati quando torna la connessione.
 
-**Videochiamata:** con `/video` il tablet entra da solo in una stanza di Jitsi Meet (gratuito, nessun
-server) e ti manda il link; tu lo apri sul telefono e vedi/senti la persona. Sul tablet NON compare
+**Videochiamata:** con `/video` il tablet entra da solo in una **stanza fissa** (configurata nel pannello)
+e ti manda il link; tu lo apri sul telefono e vedi/senti la persona. Sul tablet NON compare
 l'interfaccia della chiamata: resta l'orologio, con in alto l'avviso «📹 Videoconvorbire cu familia»
 per tutta la durata, e la persona sente la tua voce dall'altoparlante. La chiamata si chiude da sola
 dopo 15 minuti, con `/stopvideo`, o quando chiudi tu dal telefono.
+
+### Creare la stanza fissa (una volta sola)
+
+meet.jit.si non va più bene per l'ingresso automatico: da agosto 2023 chi crea la riunione deve fare
+login con un account, e un'app incorporata non può farlo. Si usa quindi una stanza fissa gratuita.
+Consigliato **Daily.co** (ingresso immediato dal solo link):
+
+1. Vai su https://www.daily.co → crea un account gratuito.
+2. Dashboard → **Rooms** → **Create room**. Dai un nome (es. `casa`).
+3. Nelle impostazioni della stanza disattiva il **prejoin / lobby**, così il tablet entra senza schermate.
+4. Copia l'indirizzo della stanza, tipo `https://iltuonome.daily.co/casa`.
+5. Sul tablet: pannello → «Control de la distanță» → incolla il link in «Link pentru videoconvorbire».
+
+Puoi incollare anche il link di un altro servizio che entra automaticamente dal solo link; se non è
+Daily, il tablet lo apre in una finestra nascosta (funziona solo se quel servizio non chiede conferme).
 
 **Privacy:** la fotocamera si accende solo per lo scatto (circa 2 secondi) e per tutto quel tempo
 in alto sullo schermo compare «📷 Se face o fotografie pentru familie». Le foto non vengono salvate

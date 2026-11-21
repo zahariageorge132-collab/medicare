@@ -26,6 +26,7 @@ export interface Settings {
   kiosk: boolean;
   telegram: TelegramSettings;
   camera: 'user' | 'environment';
+  videoRoom: string; // link della stanza fissa per la videochiamata
   /** Le dosi programmate prima di questo momento (data+minuti) vengono ignorate. */
   activeSince: { date: string; minutes: number };
 }
@@ -57,6 +58,7 @@ export function defaultSettings(activeSince: Settings['activeSince']): Settings 
     kiosk: false,
     telegram: { token: '', chats: [], alertAfterMin: 15, notifyConfirm: true },
     camera: 'user',
+    videoRoom: '',
     activeSince,
   };
 }

@@ -111,6 +111,8 @@ export const T = {
   tgNoChats: 'Nicio persoană conectată încă.',
   tgAlertAfter: 'Trimite avertizare dacă alarma sună de (minute, 0 = niciodată)',
   tgNotifyConfirm: 'Trimite mesaj la fiecare confirmare',
+  tgVideoRoom: 'Link pentru videoconvorbire (ex. Daily.co)',
+  tgVideoHelp: 'Creați gratuit o cameră pe daily.co și lipiți aici adresa ei (ex. https://numele.daily.co/casa).',
   tgCamera: 'Camera pentru fotografii',
   tgCameraFront: 'Frontală (spre pacient)',
   tgCameraBack: 'Din spate',
@@ -175,6 +177,7 @@ export const T = {
       'Deschideți acest link pe telefon pentru a vedea și a vorbi:\n' + url +
       '\n\nApăsați „Join / Intră". Veți vedea și auzi persoana; pe tabletă rămâne ceasul, iar persoana aude vocea dumneavoastră. Convorbirea se închide singură după câteva minute.',
     videoError: 'Nu am putut porni videoconvorbirea. Verificați internetul (Wi-Fi) pe tabletă.',
+    videoNoRoom: 'Nu este setat niciun link pentru videoconvorbire. Adăugați-l în setările tabletei (Control de la distanță).',
     videoStopped: '📹 Videoconvorbirea s-a încheiat.',
     videoNone: 'Nicio videoconvorbire activă.',
   },

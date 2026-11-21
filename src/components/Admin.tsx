@@ -417,6 +417,19 @@ function RemoteSection({ settings, remote, onChange }: {
         <input type="checkbox" checked={tg.notifyConfirm} onChange={(e) => setTg({ notifyConfirm: e.target.checked })} />
         <span>{T.tgNotifyConfirm}</span>
       </label>
+      <label className="col">
+        <span>{T.tgVideoRoom}</span>
+        <input
+          type="url"
+          className="wide"
+          autoComplete="off"
+          value={settings.videoRoom}
+          placeholder="https://…daily.co/…"
+          onChange={(e) => onChange({ ...settings, videoRoom: e.target.value.trim() })}
+        />
+        <small className="hint">{T.tgVideoHelp}</small>
+      </label>
+
       <label className="row">
         <span>{T.tgCamera}</span>
         <select
